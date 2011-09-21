@@ -33,17 +33,3 @@ class TickerData
     return
 
 
-class DefaultHistoricalSource
-  constructor: (@symbol, periodicity, @start, end) ->
-    @periodicity = if _([periodicities.ONEDAY, periodicities.ONEWEEK]).include(periodicity)
-        periodicity
-      else throw "invalid periodicity"
-    @end = end ? undefined
-
-class DefaultOHLCStream
-  constructor: (@symbol, periodicity, pollFrequency) ->
-    @periodicity = if _(periodicities).include(periodicity) 
-      periodicity 
-    else throw "invalid periodicity"
-    @pollFrequency = pollFrequency ? periodicities.ONEMIN
-
