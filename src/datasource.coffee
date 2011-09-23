@@ -1,5 +1,6 @@
 {periodicities} = require './strat-common'
 http = require 'http'
+{EventEmitter} = require 'events'
 _ = require '../deps/underscore'
 
 class DefaultHistoricalSource
@@ -30,12 +31,13 @@ class DefaultHistoricalSource
         _(data).each((bar) ->
           @events.emit('bar', bar.time, bar)
         )
+        @events.emit('end')
       )
     ).on('error', (err) ->
       throw "download failed: #{err.message}"
     )
 
-parseHistoricalCsv = (csv) ->
+exports.parseHistoricalCsv = (csv) ->
   lines = csv.split('\n')
   bars = _(lines).map((line) ->
     if not doRead
@@ -52,6 +54,9 @@ parseHistoricalCsv = (csv) ->
         vol: parseInt(barData[5])
         adjustedClose: parseFloat(barData[6])
   )
+
+exports.createHistoricalSource = (symbol, periodicity, start, end, onBarCallback) ->
+  new DefaultHistoricalSource(symbol, periodicity, start, end, onBarCallback)
 
 class DefaultOHLCStream
   constructor: (@symbol, periodicity, pollFrequency, onBarCallback) ->
