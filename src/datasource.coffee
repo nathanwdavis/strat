@@ -5,6 +5,7 @@ _ = require '../deps/underscore'
 
 class DefaultHistoricalSource
   constructor: (@symbol, periodicity, @start, end, onBarCallback) ->
+    debugger
     @periodicity = if _([periodicities.ONEDAY, periodicities.ONEWEEK]).include(periodicity)
         periodicity
       else throw "invalid periodicity"
@@ -20,7 +21,7 @@ class DefaultHistoricalSource
       path: "/table.csv?s=#{symbol}&a=#{start.month}&b=#{start.day}&c=#{start.year}&d=#{end.month}&e=#{end.day}&f=#{end.year}&g=#{periodicityParam}&ignore=.csv"
     resBody = ""
     http.get(reqOpt, (res) ->
-      if res.statusCode not 200
+      if res.statusCode != 200
         throw "invalid symbol"
       res.setEncoding('utf8')
       res.on('data', (chunk) ->
@@ -37,7 +38,7 @@ class DefaultHistoricalSource
       throw "download failed: #{err.message}"
     )
 
-exports.parseHistoricalCsv = (csv) ->
+exports.parseHistoricalCsv = parseHistoricalCsv = (csv) ->
   lines = csv.split('\n')
   bars = _(lines).map((line) ->
     if not doRead

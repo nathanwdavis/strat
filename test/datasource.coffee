@@ -7,21 +7,23 @@ datasource = require '../lib/datasource'
 
 vows.describe('DefaultHistoricalDatasource').addBatch
 
-  'when createHistoricalDatasource is invoked':
-    topic: datasource.createHistoricalSource(
+  'when createHistoricalDatasource is invoked for 4 days':
+    topic: ->
+      bars = []
+      ds = datasource.createHistoricalSource(
         'SPY', 
         periodicities.ONEDAY, 
         new Date('2011-09-01'), 
-        new Date('2011-09-04')
-    ),
-
-    'the callback should get called once for each period': (ds) ->
-      count = 0
-      ds.events.on('bar', (time, ohlcv) ->
-        count++
+        new Date('2011-09-04'),
+        (time,ohlcv) -> 
+          bars.push({time: time, ohlcv: ohlcv})
       )
       ds.events.on('end', ->
-        assert.equal(count, 4)
+        @callback(bars)
       )
+    ,
+
+    'the callback should get called once for each period': (bars) ->
+      assert.equal(bars.length, 4)
 
 .export(module)
