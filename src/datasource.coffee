@@ -27,7 +27,7 @@ class DefaultHistoricalSource
         resBody += chunk
       )
       res.on('end', ->
-        data = parseHistoricalCsv(resBody)
+        data = parseHistoricalCsv(resBody, true)
         _(data).each((bar) ->
           events.emit('bar', bar.time, bar)
         )
@@ -37,9 +37,11 @@ class DefaultHistoricalSource
       throw "download failed: #{err.message}"
     )
 
-exports.parseHistoricalCsv = parseHistoricalCsv = (csv) ->
+exports.parseHistoricalCsv = parseHistoricalCsv = (csv, removeHeader) ->
   lines = csv.split('\n')
-  bars = _(lines.slice(1)).map((line) ->
+  if removeHeader then lines = lines.slice(1)
+  lines = _(lines).filter((line) -> line != "")
+  bars = _(lines).map((line) ->
     barData = line.split(',')
     ohlcv =
       time: Date.parse(barData[0])

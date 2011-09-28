@@ -1,4 +1,4 @@
-
+{EventEmitter} = require 'events'
 assert = require 'assert'
 vows = require 'vows'
 _ = require '../deps/underscore'
@@ -9,6 +9,7 @@ vows.describe('DefaultHistoricalDatasource').addBatch
 
   'when createHistoricalDatasource is invoked for 4 days':
     topic: ->
+      emitter = new EventEmitter
       bars = []
       ds = datasource.createHistoricalSource(
         'SPY', 
@@ -18,13 +19,17 @@ vows.describe('DefaultHistoricalDatasource').addBatch
         (time,ohlcv) -> 
           bars.push({time: time, ohlcv: ohlcv})
       )
-      callback = @callback
       ds.events.on('end', =>
-        callback(bars)
+        debugger
+        emitter.emit('success', bars)
+        return
       )
-    #,
-    # Not working yet
-    #'the callback should get called once for each period': (bars) ->
-    #  assert.equal(bars.length, 4)
+      return emitter
+    ,
+    #Not working yet
+    'the callback should get called once for each period': (err,bars) ->
+      debugger
+      assert.isNull(err)
+      assert.strictEqual(bars.length, 3)
 
 .export(module)
