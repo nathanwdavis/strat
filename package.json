@@ -8,7 +8,7 @@
   },
   "main": "main.js",
   "scripts": {
-    "test": "node_modules/bin/vows test/*.js --spec"
+    "test": "coffee -cb test/ && ~/node_modules/.bin/vows test/*.js --spec"
   },
   "engines": {
     "node": ">=v0.4.7"

@@ -52,7 +52,7 @@ exports.parseHistoricalCsv = parseHistoricalCsv = (csv, removeHeader) ->
       vol: parseInt(barData[5])
       adjustedClose: parseFloat(barData[6])
   )
-  bars
+  bars.reverse()
 
 exports.createHistoricalSource = (symbol, periodicity, start, end, onBarCallback) ->
   new DefaultHistoricalSource(symbol, periodicity, start, end, onBarCallback)
